@@ -1,0 +1,31 @@
+{
+    "advanced_chat": {
+        "rooms_empty": "Нет комнат",
+        "room_empty": "Комната не выбрана",
+        "new_messages": "Новые сообщения",
+        "message_deleted": "Сообщение было удалено",
+        "messages_empty": "Нет сообщений",
+        "conversation_started": "Переписка начата:",
+        "type_message": "Введите сообщение",
+        "search": "Поиск",
+        "is_online": "в сети",
+        "last_seen": "был(а) в сети ",
+        "is_typing": "печатает...",
+        "cancel_select_message": "Отмена"
+    },
+    "title": "Продвинутый чат",
+    "configure_room": "Настройки комнаты",
+    "delete_room": "Удалить комнату",
+    "reply_message": "Ответить",
+    "edit_message": "Изменить",
+    "delete_message": "Удалить",
+    "select_messages": "Выбрать",
+    "room_configuration": "Настройки комнаты {name}",
+    "creator": "Создатель",
+    "room_id": "Идентификатор",
+    "room_name": "Имя комнаты",
+    "tags": "Теги",
+    "participants": "Участники",
+    "ok": "OK",
+    "cancel": "Отмена"
+}

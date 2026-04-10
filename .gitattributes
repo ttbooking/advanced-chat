@@ -1,0 +1,22 @@
+* text=auto eol=lf
+
+*.blade.php diff=html
+*.css diff=css
+*.html diff=html
+*.md diff=markdown
+*.php diff=php
+
+public/*.css binary
+public/*.js binary
+public/*.map binary
+
+/.* export-ignore
+/stubs export-ignore
+/tests export-ignore
+/workbench export-ignore
+phpstan.neon.dist export-ignore
+phpunit.xml.dist export-ignore
+pint.json export-ignore
+pnpm-lock.yaml export-ignore
+testbench.yaml export-ignore
+workbench.run.xml export-ignore

@@ -1,0 +1,89 @@
+{
+    "name": "ttbooking/advanced-chat",
+    "type": "library",
+    "description": "Laravel Advanced Chat.",
+    "keywords": [
+        "chat",
+        "advanced chat",
+        "laravel"
+    ],
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/ttbooking/advanced-chat/issues",
+        "source": "https://github.com/ttbooking/advanced-chat"
+    },
+    "authors": [
+        {
+            "name": "Sergey Danilchenko",
+            "email": "s.danilchenko@ttbooking.ru"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "laravel/framework": "^12.24 || ^13.0",
+        "ttbooking/laravel-nanoid": "^1.0",
+        "ttbooking/vite-manager": "^1.2"
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.23",
+        "forxer/laravel-gravatar": "^4.3",
+        "larastan/larastan": "^2.7 || ^3.0",
+        "laravel/pint": "^1.17",
+        "laravel/reverb": "^1.0",
+        "mockery/mockery": "^1.6",
+        "orchestra/testbench": "^10.5 || ^11.0",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "TTBooking\\AdvancedChat\\": "src/",
+            "TTBooking\\AdvancedChat\\Database\\Factories\\": "database/factories/",
+            "TTBooking\\AdvancedChat\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TTBooking\\AdvancedChat\\Tests\\": "tests/",
+            "Workbench\\App\\": "workbench/app/",
+            "Workbench\\Database\\Factories\\": "workbench/database/factories/",
+            "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "TTBooking\\AdvancedChat\\AdvancedChatServiceProvider"
+            ],
+            "aliases": {
+                "Chat": "TTBooking\\AdvancedChat\\Facades\\Chat",
+                "AdvancedChat": "TTBooking\\AdvancedChat\\AdvancedChat"
+            }
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        },
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "scripts": {
+        "post-autoload-dump": [
+            "@clear",
+            "@prepare"
+        ],
+        "analyse": "@php vendor/bin/phpstan analyse",
+        "lint": "@php vendor/bin/pint --test",
+        "test": "@php vendor/bin/pest",
+        "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
+        "prepare": "@php vendor/bin/testbench package:discover --ansi",
+        "build": "@php vendor/bin/testbench workbench:build --ansi",
+        "serve": [
+            "Composer\\Config::disableProcessTimeout",
+            "@build",
+            "@php vendor/bin/testbench serve --ansi"
+        ]
+    }
+}

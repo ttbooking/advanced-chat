@@ -1,0 +1,35 @@
+<?php
+
+declare(strict_types=1);
+
+namespace TTBooking\AdvancedChat\Database\Factories;
+
+use Illuminate\Database\Eloquent\Factories\Factory;
+use TTBooking\AdvancedChat\Models\Room;
+use TTBooking\AdvancedChat\Models\RoomTag;
+
+/**
+ * @extends Factory<RoomTag>
+ */
+class RoomTagFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var class-string<RoomTag>
+     */
+    protected $model = RoomTag::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'room_id' => Room::factory(),
+            'name' => fake()->words(2, true),
+        ];
+    }
+}

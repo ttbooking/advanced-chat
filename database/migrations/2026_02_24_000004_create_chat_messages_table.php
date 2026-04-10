@@ -1,0 +1,48 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use TTBooking\AdvancedChat\AdvancedChat;
+use TTBooking\AdvancedChat\Enums\MessageState;
+use TTBooking\AdvancedChat\Models\Message;
+use TTBooking\AdvancedChat\Models\Room;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        $sqlite = DB::connection()->getDriverName() === 'sqlite';
+
+        Schema::create('chat_messages', function (Blueprint $table) use ($sqlite) {
+            $table->nanoid(length: (new Message)->nanoidSize())->primary();
+            $table->foreignNanoid('room_id', (new Room)->nanoidSize())->constrained('chat_rooms')->cascadeOnDelete();
+            $table->foreignIdFor(AdvancedChat::userModel(), 'sent_by')->constrained()->cascadeOnDelete();
+            $table->nanoid('reply_to', (new Message)->nanoidSize())->nullable()->index();
+            $table->text('content')->unless($sqlite)->fulltext();
+            $table->json('meta')->nullable();
+            $table->enum('state', array_column(MessageState::cases(), 'value'))->default(MessageState::Saved->value)
+                ->collation($sqlite ? 'binary' : 'utf8mb4_bin');
+            $table->unsignedTinyInteger('flags')->default(0);
+            $table->timestamp('created_at', 6)->useCurrent()->index();
+            $table->timestamp('updated_at', 6)->useCurrent()->useCurrentOnUpdate();
+            $table->softDeletes('deleted_at', 6);
+        });
+
+        Schema::table('chat_messages', function (Blueprint $table) {
+            $table->foreign('reply_to')->references('id')->on('chat_messages')->cascadeOnDelete();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('chat_messages');
+    }
+};

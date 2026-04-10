@@ -1,0 +1,17 @@
+@layer theme, base, components, utilities;
+
+@import "tailwindcss/theme.css" layer(theme) prefix(tw);
+@import "tailwindcss/utilities.css" layer(utilities) prefix(tw);
+
+@source "./vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php";
+@source "./storage/framework/views/*.php";
+@source "./resources/views/**/*.blade.php";
+@source "./resources/js/**/*.vue";
+
+@theme {
+    --font-sans: "Nunito", "sans-serif";
+}
+
+[v-cloak] {
+    display: none;
+}

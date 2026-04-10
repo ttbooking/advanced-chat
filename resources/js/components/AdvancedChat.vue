@@ -1,0 +1,166 @@
+<template>
+    <vue-advanced-chat
+        v-if="$env.userId"
+        :theme="theme"
+        :height="computedHeight"
+        :current-user-id="$env.userId"
+        :rooms.prop="rooms"
+        :rooms-loaded="roomRepo.loaded.value"
+        :room-id="roomId"
+        :single-room="!!roomId"
+        :custom-search-room-enabled="true"
+        :text-messages.prop="textMessages"
+        :room-info-enabled="!!$env.roomInfo"
+        :messages.prop="roomMessages"
+        :messages-loaded="messageRepo.loaded.value"
+        :room-actions.prop="menuActions"
+        :menu-actions.prop="menuActions"
+        :message-actions.prop="messageActions"
+        :show-search="$env.features.showSearch ?? true"
+        :show-add-room="$env.features.showAddRoom ?? true"
+        :show-send-icon="$env.features.showSendIcon ?? true"
+        :show-files="$env.features.showFiles ?? true"
+        :show-audio="$env.features.showAudio ?? true"
+        :audio-bit-rate="$env.features.audioBitRate ?? 128"
+        :audio-sample-rate="$env.features.audioSampleRate ?? 44100"
+        :show-emojis="$env.features.showEmojis ?? true"
+        :show-reaction-emojis="$env.features.showReactionEmojis ?? true"
+        :show-new-messages-divider="$env.features.showNewMessagesDivider ?? true"
+        :show-footer="$env.features.showFooter ?? true"
+        :styles.prop="style"
+        @fetch-messages="messageRepo.fetch($event.detail[0])"
+        @fetch-more-rooms="roomRepo.fetch"
+        @send-message="messageRepo.send($event.detail[0])"
+        @edit-message="messageRepo.edit($event.detail[0])"
+        @delete-message="messageRepo.delete($event.detail[0])"
+        @open-file="openFile($event.detail[0])"
+        @open-failed-message="messageRepo.trySend($event.detail[0])"
+        @add-room="roomRepo.add"
+        @search-room="searchRoom($event.detail[0])"
+        @room-info="$env.roomInfo?.($event.detail[0])"
+        @room-action-handler="menuActionHandler($event.detail[0])"
+        @menu-action-handler="menuActionHandler($event.detail[0])"
+        @send-message-reaction="messageRepo.sendReaction($event.detail[0])"
+    />
+    <RoomOptionsDialog
+        v-if="room"
+        v-show="roomOptionsDialogOpened"
+        v-model="room"
+        v-model:show="roomOptionsDialogOpened"
+        :z-index="index"
+    />
+</template>
+
+<script setup lang="ts">
+import { ref, computed, watchEffect, onBeforeMount, onBeforeUnmount } from "vue";
+import { useI18n } from "vue-i18n";
+import { register, CustomAction, VueAdvancedChat } from "vue-advanced-chat";
+import { useDebounceFn, usePreferredColorScheme } from "@vueuse/core";
+import { useTheme } from "vuetify";
+import type { Room as BaseRoom, SearchRoomArgs, OpenFileArgs } from "@/types";
+
+import { useRepo } from "pinia-orm";
+import RoomRepository from "@/repositories/RoomRepository";
+import MessageRepository from "@/repositories/MessageRepository";
+import Room from "@/models/Room";
+
+import RoomOptionsDialog from "@/components/RoomOptionsDialog.vue";
+
+register();
+
+const model = defineModel<string>();
+
+const props = withDefaults(defineProps<{ roomId?: string | null; height: number; index?: number }>(), {
+    roomId: null,
+    index: 2000,
+});
+
+const theme = computed(() => (usePreferredColorScheme().value !== "dark" ? "light" : "dark"));
+const style = computed(() => window.chat.styles[theme.value]);
+useTheme().change(theme.value);
+
+const computedHeight = computed(() => props.height - 35 + "px");
+
+const { t, tm, rt } = useI18n();
+
+const textMessages = computed(() =>
+    Object.fromEntries(Object.entries(tm("advanced_chat")).map(([key, msg]) => [key.toUpperCase(), rt(msg)])),
+);
+
+const roomRepo = useRepo(RoomRepository);
+const messageRepo = useRepo(MessageRepository);
+
+const rooms = computed<Room[]>(() =>
+    props.roomId ? roomRepo.whereId(props.roomId).with("users").get() : roomRepo.with("users").get(),
+);
+const roomMessages = computed(() => messageRepo.currentRoom().get());
+
+watchEffect(() => {
+    model.value = messageRepo.room.value?.roomName;
+});
+
+const roomOptionsDialogOpened = ref<boolean>(false);
+
+const currentRoomId = ref<string | null>(null);
+const room = computed<BaseRoom>({
+    get(oldRoom) {
+        if (currentRoomId.value === oldRoom?.roomId) return oldRoom;
+        return roomRepo.with("creator").with("users").find(currentRoomId.value!)?.$refresh().$toJson() as BaseRoom;
+    },
+    set(room) {
+        roomRepo.update(room);
+    },
+});
+
+const menuActions = ref([
+    { name: "configureRoom", title: t("configure_room") },
+    { name: "deleteRoom", title: t("delete_room") },
+]);
+
+const messageActions = ref([
+    { name: "replyMessage", title: t("reply_message") },
+    { name: "editMessage", title: t("edit_message"), onlyMe: true },
+    { name: "deleteMessage", title: t("delete_message"), onlyMe: true },
+    { name: "selectMessages", title: t("select_messages") },
+]);
+
+onBeforeMount(async () => {
+    roomRepo.filter = window.chat.filter ?? null;
+    if (props.roomId) {
+        await roomRepo.single(props.roomId);
+    } else {
+        await roomRepo.fetch();
+    }
+
+    window.Echo.private(`advanced-chat.user.${window.chat.userId}`)
+        .listenToAll((event: string, data: unknown) => console.log(`user.${window.chat.userId}`, event, data))
+        .error((error: unknown) => console.error(error))
+        .listen(".user.invited", (room: BaseRoom) => roomRepo.save(room))
+        .listen(".user.kicked", (room: BaseRoom) => roomRepo.destroy(room.roomId));
+});
+
+onBeforeUnmount(() => {
+    window.Echo.leaveChannel(`advanced-chat.user.${window.chat.userId}`);
+
+    roomRepo.destroy(rooms.value.map((room) => room.roomId));
+});
+
+const searchRoom = useDebounceFn(async ({ value }: SearchRoomArgs) => await roomRepo.fetch(value), 500, {
+    maxWait: 1000,
+});
+
+function openFile(args: OpenFileArgs) {
+    window.location.assign(args.file.file.url);
+}
+
+function menuActionHandler({ roomId, action }: { roomId: string; action: CustomAction }) {
+    switch (action.name) {
+        case "configureRoom":
+            currentRoomId.value = roomId;
+            roomOptionsDialogOpened.value = true;
+            break;
+        case "deleteRoom":
+            roomRepo.delete(roomId);
+    }
+}
+</script>

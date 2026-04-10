@@ -1,0 +1,88 @@
+<?php
+
+declare(strict_types=1);
+
+namespace TTBooking\AdvancedChat\Http\Controllers;
+
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Response;
+use TTBooking\AdvancedChat\Http\Requests\StoreRoomRequest;
+use TTBooking\AdvancedChat\Http\Requests\UpdateRoomRequest;
+use TTBooking\AdvancedChat\Http\Resources\RoomResource;
+use TTBooking\AdvancedChat\Models\Room;
+use TTBooking\AdvancedChat\Support\Tag;
+
+class RoomController extends Controller
+{
+    use AuthorizesRequests;
+
+    public function __construct()
+    {
+        $this->authorizeResource(Room::class);
+    }
+
+    /**
+     * Display a listing of the rooms.
+     */
+    public function index(Request $request): ResourceCollection
+    {
+        return Room::query()
+            ->when($search = $request->query('search'))
+            ->withDescriptor($search)
+            ->get()
+            ->toResourceCollection();
+    }
+
+    /**
+     * Store a newly created room in storage.
+     */
+    public function store(StoreRoomRequest $request): RoomResource
+    {
+        $room = Room::query()->create($request->safe()->except('users', 'tags') + ['created_by' => auth()->id()]);
+        $room->users()->sync($request->validated('users.*._id'));
+
+        foreach ($request->validated('tags.*') ?? [] as $tag) {
+            $room->tags()->createOrFirst(Tag::from($tag)->toArray());
+        }
+
+        return $room->toResource();
+    }
+
+    /**
+     * Display the specified room.
+     */
+    public function show(Room $room): RoomResource
+    {
+        /** @var RoomResource */
+        return $room->toResource();
+    }
+
+    /**
+     * Update the specified room in storage.
+     */
+    public function update(UpdateRoomRequest $request, Room $room): RoomResource
+    {
+        $room->update($request->safe()->except('users', 'tags'));
+        $room->users()->sync($request->validated('users.*._id'));
+
+        foreach ($request->validated('tags.*') ?? [] as $tag) {
+            $room->tags()->createOrFirst(Tag::from($tag)->toArray());
+        }
+
+        /** @var RoomResource */
+        return $room->toResource();
+    }
+
+    /**
+     * Remove the specified room from storage.
+     */
+    public function destroy(Room $room): \Illuminate\Http\Response
+    {
+        $room->delete();
+
+        return Response::noContent();
+    }
+}

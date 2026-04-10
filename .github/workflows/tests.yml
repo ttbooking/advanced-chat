@@ -1,0 +1,41 @@
+name: tests
+
+on: [push, pull_request]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: true
+      matrix:
+        php: [8.3, 8.4, 8.5]
+        laravel: ['12.24', '13.0']
+        stability: [prefer-lowest, prefer-stable]
+
+    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      - name: Install dependencies
+        run: |
+          composer require "laravel/framework:^${{ matrix.laravel }}" --no-interaction --no-update
+          composer update --${{ matrix.stability }} --prefer-dist --no-interaction
+
+      - name: Execute lint tests with Laravel preset
+        run: vendor/bin/pint --test
+
+      - name: Execute static analysis
+        run: vendor/bin/phpstan
+        if: matrix.php == '8.3' && matrix.stability == 'prefer-stable'
+
+      - name: Execute unit/feature tests
+        run: vendor/bin/pest

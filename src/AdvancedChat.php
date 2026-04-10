@@ -1,0 +1,93 @@
+<?php
+
+declare(strict_types=1);
+
+namespace TTBooking\AdvancedChat;
+
+use Illuminate\Contracts\Auth\Access\Authorizable;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\HtmlString;
+use TTBooking\AdvancedChat\Http\Resources\UserResource;
+use TTBooking\ViteManager\Facades\Vite;
+
+class AdvancedChat
+{
+    /**
+     * @return class-string<User>
+     */
+    public static function userModel(): string
+    {
+        /** @var class-string<User> */
+        return config('advanced-chat.user_model', 'App\\Models\\User');
+    }
+
+    /**
+     * @return class-string<JsonResource>
+     */
+    public static function userResource(): string
+    {
+        /** @var class-string<JsonResource> */
+        return config('advanced-chat.user_resource', UserResource::class);
+    }
+
+    public static function canViewForeignRooms(Authenticatable|Model|null $user): bool
+    {
+        return $user instanceof Authorizable && $user->can('viewForeignRooms');
+    }
+
+    /**
+     * @param  array<string, mixed>  $features
+     * @param  array{light?: array<string, array<string, string>>, dark?: array<string, array<string, string>>}  $styles
+     */
+    public static function standalone(?string $filter = null, ?string $roomId = null, array $features = [], array $styles = []): HtmlString
+    {
+        $scriptVariables = json_encode([
+            'path' => config('advanced-chat.path'),
+            'userId' => (string) auth()->id(),
+            'roomId' => $roomId,
+            'filter' => $filter,
+            'permissions' => [
+                'viewForeignRooms' => static::canViewForeignRooms(auth()->user()),
+            ],
+            'features' => (object) ($features + array_filter(config('advanced-chat.features', []), static fn (mixed $value) => ! is_null($value))),
+            'styles' => [
+                'light' => (object) array_merge_recursive(array_filter(config('advanced-chat.styles.light', [])), $styles['light'] ?? []),
+                'dark' => (object) array_merge_recursive(array_filter(config('advanced-chat.styles.dark', [])), $styles['dark'] ?? []),
+            ],
+        ]);
+
+        return new HtmlString(
+            "<script>window.chat = $scriptVariables</script>".
+            Vite::app('advanced-chat')->toHtml()
+        );
+    }
+
+    /**
+     * @param  array<string, mixed>  $features
+     * @param  array{light?: array<string, array<string, string>>, dark?: array<string, array<string, string>>}  $styles
+     */
+    public static function windowed(array $features = [], array $styles = []): HtmlString
+    {
+        $scriptVariables = json_encode([
+            'path' => config('advanced-chat.path'),
+            'userId' => (string) auth()->id(),
+            'permissions' => [
+                'viewForeignRooms' => static::canViewForeignRooms(auth()->user()),
+            ],
+            'windowDefaults' => config('advanced-chat.window_defaults', []),
+            'features' => (object) ($features + array_filter(config('advanced-chat.features', []), static fn (mixed $value) => ! is_null($value))),
+            'styles' => [
+                'light' => (object) array_merge_recursive(array_filter(config('advanced-chat.styles.light', [])), $styles['light'] ?? []),
+                'dark' => (object) array_merge_recursive(array_filter(config('advanced-chat.styles.dark', [])), $styles['dark'] ?? []),
+            ],
+        ]);
+
+        return new HtmlString(
+            "<script>window.chat = $scriptVariables</script>".
+            Vite::app('advanced-chat')->withEntryPoints(['resources/js/win.ts'])->toHtml()
+        );
+    }
+}

@@ -1,0 +1,71 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "php",
+            "request": "launch",
+            "name": "queue",
+            "program": "${workspaceFolder}/vendor/bin/testbench",
+            "cwd": "${workspaceFolder}",
+            "port": 0,
+            "args": ["queue:work", "--ansi"],
+            "presentation": {
+                "hidden": true
+            }
+        },
+        {
+            "type": "php",
+            "request": "launch",
+            "name": "schedule",
+            "program": "${workspaceFolder}/vendor/bin/testbench",
+            "cwd": "${workspaceFolder}",
+            "port": 0,
+            "args": ["schedule:work", "--ansi"],
+            "presentation": {
+                "hidden": true
+            }
+        },
+        {
+            "type": "php",
+            "request": "launch",
+            "name": "reverb",
+            "program": "${workspaceFolder}/vendor/bin/testbench",
+            "cwd": "${workspaceFolder}",
+            "port": 0,
+            "args": ["reverb:start", "--debug", "--ansi"],
+            "presentation": {
+                "hidden": true
+            }
+        },
+        {
+            "type": "php",
+            "request": "launch",
+            "name": "serve",
+            "program": "${workspaceFolder}/vendor/bin/testbench",
+            "cwd": "${workspaceFolder}",
+            "port": 9003,
+            "args": ["serve", "--ansi"],
+            "presentation": {
+                "hidden": true
+            }
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "browse",
+            "url": "http://127.0.0.1:8000",
+            "webRoot": "${workspaceFolder}",
+            "presentation": {
+                "hidden": true
+            }
+        }
+    ],
+    "compounds": [
+        {
+            "name": "workbench",
+            "configurations": ["queue", "schedule", "reverb", "serve", "browse"],
+            "preLaunchTask": "workbench: build",
+            "stopAll": true
+        }
+    ]
+}

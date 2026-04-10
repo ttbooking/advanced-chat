@@ -1,0 +1,51 @@
+<?php
+
+declare(strict_types=1);
+
+namespace TTBooking\AdvancedChat\Http\Resources;
+
+use Exception;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+/**
+ * @mixin User
+ */
+class UserResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array<string, mixed>
+     *
+     * @throws Exception
+     */
+    public function toArray(?Request $request = null): array
+    {
+        if (! is_subclass_of($this->resource, Model::class, false)) {
+            throw new Exception(
+                sprintf('User should be an Eloquent model instance, %s given.', get_debug_type($this->resource))
+            );
+        }
+
+        $nameKey = config('advanced-chat.user_name_key', 'name');
+        $credKey = config('advanced-chat.user_cred_key', 'email');
+
+        if (! isset($this->$nameKey, $this->$credKey)) {
+            throw new Exception("User model should provide at least \"$nameKey\" and \"$credKey\" attributes.");
+        }
+
+        return [
+            '_id' => (string) $this->getKey(),
+            'username' => $this->$nameKey,
+            'credential' => $this->$credKey,
+            'avatar' => $this->avatar ?? null,
+            'status' => $this->whenHas('participant', static fn ($participant) => [
+                'state' => $participant->online ? 'online' : 'offline',
+                'lastChanged' => $participant->created_at->translatedFormat('d F, H:i'),
+            ]),
+        ];
+    }
+}

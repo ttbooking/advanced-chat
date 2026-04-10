@@ -1,0 +1,63 @@
+<?php
+
+declare(strict_types=1);
+
+namespace TTBooking\AdvancedChat\Events\User;
+
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Str;
+use TTBooking\AdvancedChat\Models\Room;
+
+abstract class Event implements ShouldBroadcast
+{
+    use InteractsWithSockets, SerializesModels;
+
+    public bool $afterCommit = true;
+
+    protected ?string $broadcastAs = null;
+
+    /**
+     * Create a new event instance.
+     */
+    public function __construct(public Model $user, public Room $room) {}
+
+    /**
+     * The event's broadcast name.
+     */
+    public function broadcastAs(): string
+    {
+        return 'user.'.($this->broadcastAs ?? Str::kebab(class_basename(static::class)));
+    }
+
+    /**
+     * Get the channels the event should broadcast on.
+     */
+    public function broadcastOn(): PrivateChannel
+    {
+        return new PrivateChannel('advanced-chat.user.'.$this->user->getKey());
+    }
+
+    /**
+     * Get the data to broadcast.
+     *
+     * @return array<string, mixed>
+     */
+    public function broadcastWith(): array
+    {
+        return $this->room->toResource()->resolve();
+    }
+
+    /**
+     * Get the tags that should be assigned to the job.
+     *
+     * @return list<string>
+     */
+    public function tags(): array
+    {
+        return ['advanced-chat', 'user:'.$this->user->getKey(), 'room:'.$this->room->getKey()];
+    }
+}
