@@ -7,8 +7,12 @@
     "file": "assets/rolldown-runtime-CpWojdLp.js",
     "name": "rolldown-runtime"
   },
-  "_vuetify-BxtGOf_U.js": {
-    "file": "assets/vuetify-BxtGOf_U.js",
+  "_vuetify-C1k6LV-S.css": {
+    "file": "assets/vuetify-C1k6LV-S.css",
+    "src": "_vuetify-C1k6LV-S.css"
+  },
+  "_vuetify-DB-lwJIt.js": {
+    "file": "assets/vuetify-DB-lwJIt.js",
     "name": "vuetify",
     "imports": [
       "_rolldown-runtime-CpWojdLp.js",
@@ -23,10 +27,6 @@
       "assets/materialdesignicons-webfont-PXm3-2wK.woff",
       "assets/materialdesignicons-webfont-B7mPwVP_.ttf"
     ]
-  },
-  "_vuetify-C1k6LV-S.css": {
-    "file": "assets/vuetify-C1k6LV-S.css",
-    "src": "_vuetify-C1k6LV-S.css"
   },
   "node_modules/.pnpm/@mdi+font@7.4.47/node_modules/@mdi/font/fonts/materialdesignicons-webfont.eot": {
     "file": "assets/materialdesignicons-webfont-CSr8KVlo.eot",
@@ -49,21 +49,21 @@
     "src": "resources/images/favicon.svg"
   },
   "resources/js/app.ts": {
-    "file": "assets/app-DcezP5Zh.js",
+    "file": "assets/app-CDOxuTyL.js",
     "name": "app",
     "src": "resources/js/app.ts",
     "isEntry": true,
     "imports": [
-      "_vuetify-BxtGOf_U.js"
+      "_vuetify-DB-lwJIt.js"
     ]
   },
   "resources/js/win.ts": {
-    "file": "assets/win-B6rN_Iqe.js",
+    "file": "assets/win-D0qhOrIZ.js",
     "name": "win",
     "src": "resources/js/win.ts",
     "isEntry": true,
     "imports": [
-      "_vuetify-BxtGOf_U.js"
+      "_vuetify-DB-lwJIt.js"
     ],
     "assets": [
       "assets/favicon-DXKRda58.svg"
