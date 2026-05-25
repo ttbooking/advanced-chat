@@ -1,22 +1,22 @@
 {
-  "_advanced-chat-DMZS5UPW.js": {
-    "file": "assets/advanced-chat-DMZS5UPW.js",
+  "_advanced-chat-CyX-FyvU.js": {
+    "file": "assets/advanced-chat-CyX-FyvU.js",
     "name": "advanced-chat"
   },
-  "_rolldown-runtime-CpWojdLp.js": {
-    "file": "assets/rolldown-runtime-CpWojdLp.js",
+  "_rolldown-runtime-QTnfLwEv.js": {
+    "file": "assets/rolldown-runtime-QTnfLwEv.js",
     "name": "rolldown-runtime"
   },
   "_vuetify-C1k6LV-S.css": {
     "file": "assets/vuetify-C1k6LV-S.css",
     "src": "_vuetify-C1k6LV-S.css"
   },
-  "_vuetify-DB-lwJIt.js": {
-    "file": "assets/vuetify-DB-lwJIt.js",
+  "_vuetify-Dl7X7lzH.js": {
+    "file": "assets/vuetify-Dl7X7lzH.js",
     "name": "vuetify",
     "imports": [
-      "_rolldown-runtime-CpWojdLp.js",
-      "_advanced-chat-DMZS5UPW.js"
+      "_rolldown-runtime-QTnfLwEv.js",
+      "_advanced-chat-CyX-FyvU.js"
     ],
     "css": [
       "assets/vuetify-C1k6LV-S.css"
@@ -49,21 +49,21 @@
     "src": "resources/images/favicon.svg"
   },
   "resources/js/app.ts": {
-    "file": "assets/app-CDOxuTyL.js",
+    "file": "assets/app-CKiTOjWx.js",
     "name": "app",
     "src": "resources/js/app.ts",
     "isEntry": true,
     "imports": [
-      "_vuetify-DB-lwJIt.js"
+      "_vuetify-Dl7X7lzH.js"
     ]
   },
   "resources/js/win.ts": {
-    "file": "assets/win-D0qhOrIZ.js",
+    "file": "assets/win-cYaRG156.js",
     "name": "win",
     "src": "resources/js/win.ts",
     "isEntry": true,
     "imports": [
-      "_vuetify-DB-lwJIt.js"
+      "_vuetify-Dl7X7lzH.js"
     ],
     "assets": [
       "assets/favicon-DXKRda58.svg"
