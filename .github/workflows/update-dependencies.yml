@@ -25,7 +25,7 @@ jobs:
       - name: Update dependencies
         run: |
           corepack enable
-          corepack use pnpm@latest-10
+          corepack use pnpm@latest-11
           npx npm-check-updates -u --target semver
           rm pnpm-lock.yaml
           pnpm install --no-frozen-lockfile
