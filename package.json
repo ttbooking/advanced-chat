@@ -19,9 +19,9 @@
         "pinia-orm": "^2.0.0",
         "string-to-color": "^2.2.2",
         "tailwindcss": "^4.3.3",
-        "vue": "^3.5.42",
+        "vue": "^3.5.43",
         "vue-advanced-chat": "^2.1.2",
-        "vue-i18n": "^11.4.10",
+        "vue-i18n": "^11.4.12",
         "vuetify": "^4.2.1",
         "winbox": "0.2.82"
     },
@@ -30,16 +30,16 @@
         "@intlify/unplugin-vue-i18n": "^11.2.5",
         "@tailwindcss/vite": "^4.3.3",
         "@types/lodash": "^4.17.25",
-        "@types/node": "^24.13.4",
+        "@types/node": "^24.13.6",
         "@types/winbox": "^0.2.6",
         "@typescript-eslint/parser": "^8.70.0",
-        "@vitejs/plugin-vue": "^6.0.8",
-        "eslint": "^10.10.0",
+        "@vitejs/plugin-vue": "^6.0.9",
+        "eslint": "^10.11.0",
         "eslint-config-prettier": "^10.1.8",
         "eslint-plugin-vue": "^10.11.0",
         "globals": "^17.12.0",
         "laravel-vite-plugin": "^2.1.0",
-        "prettier": "^3.9.6",
+        "prettier": "^3.9.8",
         "prettier-plugin-tailwindcss": "^0.8.1",
         "pusher-js": "^8.6.0",
         "sass": "^1.104.1",
@@ -51,5 +51,5 @@
         "vue-eslint-parser": "^10.4.1",
         "vue-tsc": "^3.3.11"
     },
-    "packageManager": "pnpm@11.26.0+sha512.fc0e2bf890b9f983611f1ab68c0637bce914390653699f83c1a78b005ed25f2c81e77920c8fd8eee2ecf0b58b28cdcb00a84d97f69bcf7c56b2f344710238664"
+    "packageManager": "pnpm@11.27.1+sha512.a81d4c21b9b09a4b0aebf90ef5e527d4262bdda322d26082978cb549023ac6d9cafc98b19fffaa5c71db438a65f70224edb78d7311187861ff96480d1cdca23c"
 }
