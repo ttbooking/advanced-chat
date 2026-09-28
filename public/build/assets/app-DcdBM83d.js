@@ -1,2 +1,0 @@
-import{d as o,A as t,_ as r,o as p,c as _,a as c,e as i,i as u,p as d,v as f}from"./vuetify-BmyKv5Uw.js";const m=o({__name:"App",setup(a,{expose:n}){n();const e={AdvancedChat:t};return Object.defineProperty(e,"__isScriptSetup",{enumerable:!1,value:!0}),e}});function l(a,n,e,s,A,h){return p(),_(s.AdvancedChat,{"room-id":a.$env.roomId,height:960},null,8,["room-id"])}const v=r(m,[["render",l],["__file","App.vue"]]);c(v).use(i).use(u).use(d).use(f).mount("#standalone-chat");
-//# sourceMappingURL=app-DcdBM83d.js.map
