@@ -1,5 +1,0 @@
-<?php
-
-namespace TTBooking\AdvancedChat\Tests;
-
-abstract class TestCase {}
